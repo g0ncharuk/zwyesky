@@ -1,0 +1,193 @@
+body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  overflow: hidden;
+  font-family: sans-serif;
+}
+
+#triangleCanvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  z-index: 0;
+}
+
+.grid-container {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.overflow-container {
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.bottom-overflow,
+.left-overflow,
+.right-overflow {
+  position: absolute;
+  opacity: 0;
+}
+
+.bottom-overflow {
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(0, #000000, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.1));
+}
+
+.left-overflow {
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100%;
+  background: linear-gradient(90deg, #000000, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1));
+}
+
+.right-overflow {
+  right: 0;
+  top: 0;
+  width: 100vw;
+  height: 100%;
+  background: linear-gradient(270deg, #000000, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1));
+}
+
+.content-container {
+  position: absolute;
+  bottom: 125px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  opacity: 0;
+  animation: fadeUp 1.5s ease forwards;
+  animation-delay: 1.5s;
+  z-index: 1;
+}
+
+header .brand-text {
+  font-size: 2rem;
+  font-weight: 400;
+  margin-bottom: 12px;
+  color: #ffffff;
+  letter-spacing: 2px;
+  animation: scaleIn 1s ease forwards;
+  animation-delay: 2s;
+  opacity: 0;
+}
+
+nav.icons-row {
+  display: flex;
+  gap: 30px;
+}
+
+.icon-box {
+  width: 75px;
+  height: 75px;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.5);
+  animation: fadeScale 0.8s ease forwards;
+  text-decoration: none;
+}
+
+
+
+.icon-box:nth-child(1) {
+  animation-delay: 2.2s;
+}
+
+.icon-box:nth-child(2) {
+  animation-delay: 2.4s;
+}
+
+.icon-box:nth-child(3) {
+  animation-delay: 2.6s;
+}
+
+.icon-box:nth-child(4) {
+  animation-delay: 2.8s;
+}
+
+.icon-box:hover {
+  transform: scale(1.1);
+}
+
+.icon-box svg {
+  width: 50px;
+  height: auto;
+}
+
+@media screen and (max-width: 768px) {
+  .content-container {
+    bottom: 50px;
+  }
+
+  header .brand-text {
+    font-size: 1.5rem;
+  }
+
+  nav.icons-row {
+    gap: 20px;
+  }
+
+  .icon-box {
+    width: 60px;
+    height: 60px;
+  }
+
+  .icon-box svg {
+    width: 30px;
+  }
+}
+
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
