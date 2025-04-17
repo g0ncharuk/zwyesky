@@ -12,7 +12,7 @@ async function initAudio() {
   try {
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const response = await fetch("./background.mp3");
-    consolest.log("Audio file loaded:", response);
+    console.log("Audio file loaded:", response);
     const arrayBuffer = await response.arrayBuffer();
     audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
     audioLoaded = true;
@@ -364,7 +364,7 @@ function init() {
 
   initAudio().then(() => {
     const audioPrompt = document.getElementById("audioPrompt");
-    consolest.log("Audio loaded:", audioLoaded);
+    console.log("Audio loaded:", audioLoaded);
     try {
       playAudioOnce();
       audioPrompt.classList.add("hidden");
