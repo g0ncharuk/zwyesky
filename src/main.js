@@ -12,6 +12,7 @@ async function initAudio() {
   try {
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const response = await fetch("./background.mp3");
+    consolest.log("Audio file loaded:", response);
     const arrayBuffer = await response.arrayBuffer();
     audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
     audioLoaded = true;
@@ -21,7 +22,9 @@ async function initAudio() {
 }
 
 function playAudioOnce() {
+  console.log("playAudioOnce called", audioLoaded, audioContext);
   if (!audioContext || !audioLoaded) return;
+
 
   if (audioContext.state === "suspended") {
     audioContext.resume();
@@ -361,6 +364,7 @@ function init() {
 
   initAudio().then(() => {
     const audioPrompt = document.getElementById("audioPrompt");
+    consolest.log("Audio loaded:", audioLoaded);
     try {
       playAudioOnce();
       audioPrompt.classList.add("hidden");
@@ -369,6 +373,7 @@ function init() {
       canvas.addEventListener(
         "click",
         () => {
+          console.log("Canvas clicked");
           playAudioOnce();
           audioPrompt.classList.add("hidden");
         },
@@ -378,6 +383,7 @@ function init() {
       document.addEventListener(
         "click",
         () => {
+          console.log("Document clicked");
           playAudioOnce();
           audioPrompt.classList.add("hidden");
         },
