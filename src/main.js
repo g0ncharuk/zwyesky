@@ -3,17 +3,53 @@ import "./style.css";
 const innerWidth = window.innerWidth;
 const isMobile = innerWidth <= 768;
 
+let audioContext;
+let audioBuffer;
+let audioSource;
+let audioLoaded = false;
+
+async function initAudio() {
+  try {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const response = await fetch("/background.mp3");
+    const arrayBuffer = await response.arrayBuffer();
+    audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+    audioLoaded = true;
+  } catch (error) {
+    console.error("Error loading audio:", error);
+  }
+}
+
+function playAudioOnce() {
+  if (!audioContext || !audioLoaded) return;
+
+  if (audioContext.state === "suspended") {
+    audioContext.resume();
+  }
+
+  audioSource = audioContext.createBufferSource();
+  audioSource.buffer = audioBuffer;
+  audioSource.connect(audioContext.destination);
+  audioSource.start(0);
+}
+
 const opacityAnimation = {
-  delay: 2000,
-  duration: 2000,
+  delay: 3000,
+  duration: 4000,
   from: 0.0,
   to: 1.0,
 };
 
-const cellOpacityAnim = {
-  delay: 2000,
+const overlayXAnimetion = {
+  delay: 5000,
   duration: 2000,
   from: 0.0,
+  to: 1.0,
+};
+const overlayYAnimetion = {
+  delay: 5000,
+  duration: 2000,
+  from: 0.8,
   to: 1.0,
 };
 
@@ -40,17 +76,18 @@ const cellStrokeAnimDown = isMobile
 const CONFIG = {
   rows: 3,
   trianglesPerRow: 7,
-  triangleWidth: isMobile ? innerWidth - 30 : 650,
+  triangleWidth: isMobile ? innerWidth - 30 : 750,
   centerSelectedCell: { row: 1, col: 3 },
   defaultAnimation: {
-    color: "#ffffff",
+    color: "#BEC2CB",
     triangleCount: 4,
-    delay: 750,
-    duration: 3000,
-    strokeFrom: 25,
+    delay: 1000,
+    duration: 4000,
+    strokeFrom: 80,
     strokeTo: 2,
     sizeFrom: 0.01,
-    sizeTo: 1.2,
+    sizeTo: 1.1,
+    offset: 300,
   },
   specialTriangles: [
     { row: 0, col: 0, opacityAnimation, ...cellStrokeAnimDown },
@@ -64,7 +101,9 @@ const CONFIG = {
     { row: 1, col: 0, opacityAnimation, ...cellStrokeAnimUp },
     { row: 1, col: 1, opacityAnimation, ...cellStrokeAnimDown },
     { row: 1, col: 2, opacityAnimation, ...cellStrokeAnimUp },
+
     { row: 1, col: 3, ...cellStrokeAnimDown },
+
     { row: 1, col: 4, opacityAnimation, ...cellStrokeAnimUp },
     { row: 1, col: 5, opacityAnimation, ...cellStrokeAnimDown },
     { row: 1, col: 6, opacityAnimation, ...cellStrokeAnimUp },
@@ -142,7 +181,6 @@ function createCells() {
     }
   }
 
-  // Center a specific cell
   centerSelectedCell(
     CONFIG.centerSelectedCell.row,
     CONFIG.centerSelectedCell.col
@@ -192,13 +230,15 @@ function drawCell(cell, elapsed) {
 
   let alpha = 1;
   if (config.opacityAnimation) {
-    const oa = config.opacityAnimation;
-    const delay = oa.delay || 0;
-    const duration = oa.duration || 0;
-    const from = oa.from !== undefined ? oa.from : 0.0;
-    const to = oa.to !== undefined ? oa.to : 1.0;
+    const {
+      delay = 0,
+      duration = 0,
+      from = 0.0,
+      to = 1.0,
+    } = config.opacityAnimation;
 
-    const fadeElapsed = elapsed - delay;
+    const fadeElapsed = elapsed + (config.offset || 0) - delay;
+
     if (fadeElapsed <= 0) {
       alpha = from;
     } else if (duration <= 0 || fadeElapsed >= duration) {
@@ -213,7 +253,7 @@ function drawCell(cell, elapsed) {
   const cy = (p1[1] + p2[1] + p3[1]) / 3;
 
   for (let st of subTriangles) {
-    const effectiveElapsed = elapsed - st.delayOffset;
+    const effectiveElapsed = elapsed + (config.offset || 0) - st.delayOffset;
     if (effectiveElapsed < 0) continue;
 
     const progress = (effectiveElapsed % config.duration) / config.duration;
@@ -242,8 +282,8 @@ function drawCell(cell, elapsed) {
   ctx.restore();
 }
 
-function updateOverlays(elapsed) {
-  const { delay, duration, from, to } = opacityAnimation;
+function updateYOverlays(elapsed) {
+  const { delay, duration, from, to } = overlayYAnimetion;
   let alpha = 1;
 
   const fadeElapsed = elapsed - delay;
@@ -257,6 +297,22 @@ function updateOverlays(elapsed) {
   }
 
   bottomOverlay.style.opacity = alpha;
+}
+
+function updateXOverlays(elapsed) {
+  const { delay, duration, from, to } = overlayXAnimetion;
+  let alpha = 1;
+
+  const fadeElapsed = elapsed - delay;
+  if (fadeElapsed <= 0) {
+    alpha = from;
+  } else if (fadeElapsed >= duration) {
+    alpha = to;
+  } else {
+    const t = fadeElapsed / duration;
+    alpha = from + t * (to - from);
+  }
+
   leftOverlay.style.opacity = alpha;
   rightOverlay.style.opacity = alpha;
 }
@@ -278,7 +334,8 @@ function animate(timestamp) {
     drawCell(cell, elapsed);
   }
 
-  updateOverlays(elapsed);
+  updateYOverlays(elapsed);
+  updateXOverlays(elapsed);
 }
 
 function onResize() {
@@ -301,6 +358,33 @@ function init() {
   requestAnimationFrame(animate);
 
   window.addEventListener("resize", onResize);
+
+  initAudio().then(() => {
+    const audioPrompt = document.getElementById("audioPrompt");
+    try {
+      playAudioOnce();
+      audioPrompt.classList.add("hidden");
+    } catch (e) {
+      audioPrompt.style.pointerEvents = "auto";
+      canvas.addEventListener(
+        "click",
+        () => {
+          playAudioOnce();
+          audioPrompt.classList.add("hidden");
+        },
+        { once: true }
+      );
+
+      document.addEventListener(
+        "click",
+        () => {
+          playAudioOnce();
+          audioPrompt.classList.add("hidden");
+        },
+        { once: true }
+      );
+    }
+  });
 }
 
 document.addEventListener("DOMContentLoaded", init);

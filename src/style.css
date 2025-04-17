@@ -1,7 +1,7 @@
 body {
   margin: 0;
   padding: 0;
-  background: #000;
+  background: #0A0A0A;
   overflow: hidden;
   font-family: sans-serif;
 }
@@ -11,6 +11,40 @@ body {
   inset: 0;
   display: block;
   z-index: 0;
+}
+
+/* Audio toggle button styles */
+#audioToggle {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #BEC2CB;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  opacity: 0;
+  animation: fadeScale 1s ease-in 7000ms forwards;
+}
+
+#audioToggle:hover {
+  background-color: #ffffff;
+  transform: scale(1.05);
+}
+
+#audioToggle svg {
+  width: 24px;
+  height: 24px;
+}
+
+#audioToggle:active {
+  transform: scale(0.95);
 }
 
 .grid-container {
@@ -42,7 +76,7 @@ body {
   left: 0;
   width: 100%;
   height: 100vh;
-  background: linear-gradient(0, #000000, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.1));
+  background: linear-gradient(0, #0A0A0A, rgba(10, 10, 10, 0.6), rgba(10, 10, 10, 0.1));
 }
 
 .left-overflow {
@@ -50,7 +84,7 @@ body {
   top: 0;
   width: 100vw;
   height: 100%;
-  background: linear-gradient(90deg, #000000, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1));
+  background: linear-gradient(90deg, #0A0A0A, rgba(10, 10, 10, 0.3), rgba(10, 10, 10, 0.1));
 }
 
 .right-overflow {
@@ -58,7 +92,7 @@ body {
   top: 0;
   width: 100vw;
   height: 100%;
-  background: linear-gradient(270deg, #000000, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1));
+  background: linear-gradient(270deg, #0A0A0A, rgba(10, 10, 10, 0.3), rgba(10, 10, 10, 0.1));
 }
 
 .content-container {
@@ -71,9 +105,6 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  opacity: 0;
-  animation: fadeUp 1.5s ease forwards;
-  animation-delay: 1.5s;
   z-index: 1;
 }
 
@@ -81,11 +112,13 @@ header .brand-text {
   font-size: 2rem;
   font-weight: 400;
   margin-bottom: 12px;
-  color: #ffffff;
-  letter-spacing: 2px;
-  animation: scaleIn 1s ease forwards;
-  animation-delay: 2s;
+  color: #BEC2CB;
+  letter-spacing: 0;
   opacity: 0;
+  animation:
+    scaleUp 2s ease-in 5750ms forwards,
+    fadeIn 2s linear 5750ms forwards,
+    spacingOut 2s ease-in 5750ms forwards;
 }
 
 nav.icons-row {
@@ -96,36 +129,34 @@ nav.icons-row {
 .icon-box {
   width: 75px;
   height: 75px;
-  background-color: #ffffff;
+  background-color: #BEC2CB;
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transform: scale(0.5);
-  animation: fadeScale 0.8s ease forwards;
+  transform: scale(0.9);
+  animation: fadeScale 1s ease-in forwards;
   text-decoration: none;
 }
 
-
+.icon-box:hover {
+  background-color: #fff;
+}
 
 .icon-box:nth-child(1) {
-  animation-delay: 2.2s;
+  animation-delay: 6000ms;
 }
 
 .icon-box:nth-child(2) {
-  animation-delay: 2.4s;
+  animation-delay: 6250ms;
 }
 
 .icon-box:nth-child(3) {
-  animation-delay: 2.6s;
+  animation-delay: 6500ms;
 }
 
 .icon-box:nth-child(4) {
-  animation-delay: 2.8s;
-}
-
-.icon-box:hover {
-  transform: scale(1.1);
+  animation-delay: 6750ms;
 }
 
 .icon-box svg {
@@ -154,36 +185,56 @@ nav.icons-row {
   .icon-box svg {
     width: 30px;
   }
+
+  #audioToggle {
+    width: 40px;
+    height: 40px;
+    bottom: 20px;
+    right: 20px;
+  }
+  
+  #audioToggle svg {
+    width: 20px;
+    height: 20px;
+  }
 }
 
-@keyframes fadeUp {
+@keyframes scaleUp {
   0% {
+    transform: scale(0.88);
     opacity: 0;
-    transform: translateX(-50%) translateY(20px);
   }
 
   100% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-}
-
-@keyframes scaleIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-
-  100% {
-    opacity: 1;
     transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes spacingOut {
+  0% {
+    letter-spacing: 0;
+  }
+
+  100% {
+    letter-spacing: 4px;
   }
 }
 
 @keyframes fadeScale {
   0% {
     opacity: 0;
-    transform: scale(0.5);
+    transform: scale(0.9);
   }
 
   100% {
