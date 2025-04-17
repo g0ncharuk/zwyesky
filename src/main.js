@@ -11,7 +11,7 @@ let audioLoaded = false;
 async function initAudio() {
   try {
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const response = await fetch("/background.mp3");
+    const response = await fetch("./background.mp3");
     const arrayBuffer = await response.arrayBuffer();
     audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
     audioLoaded = true;
