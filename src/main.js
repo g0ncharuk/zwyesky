@@ -25,17 +25,19 @@ function playAudioOnce() {
   console.log("playAudioOnce called", audioLoaded, audioContext);
   if (!audioContext || !audioLoaded) return;
 
-
   if (audioContext.state === "suspended") {
     console.log("Audio context suspended, resuming...");
     audioContext.resume();
   }
 
-  console.log("Playing audio");
-  audioSource = audioContext.createBufferSource();
-  audioSource.buffer = audioBuffer;
-  audioSource.connect(audioContext.destination);
-  audioSource.start(0);
+  // Only create and start a new audio source if one isn't already playing
+  if (!audioSource || audioSource.playbackState === audioSource.FINISHED_STATE) {
+    console.log("Playing audio");
+    audioSource = audioContext.createBufferSource();
+    audioSource.buffer = audioBuffer;
+    audioSource.connect(audioContext.destination);
+    audioSource.start(0);
+  }
 }
 
 const opacityAnimation = {
@@ -367,32 +369,32 @@ function init() {
   initAudio().then(() => {
     const audioPrompt = document.getElementById("audioPrompt");
     console.log("Audio loaded:", audioLoaded);
-    try {
-      playAudioOnce();
-      audioPrompt.classList.add("hidden");
-    } catch (e) {
-      audioPrompt.style.pointerEvents = "auto";
-      canvas.addEventListener(
-        "click",
-        () => {
-          console.log("Canvas clicked");
-          playAudioOnce();
-          audioPrompt.classList.add("hidden");
-        },
-        { once: true }
-      );
-
-      document.addEventListener(
-        "click",
-        () => {
-          console.log("Document clicked");
-          playAudioOnce();
-          audioPrompt.classList.add("hidden");
-        },
-        { once: true }
-      );
-    }
+    
+    // Always show the prompt on initial load for better user experience
+    audioPrompt.style.pointerEvents = "auto";
+    
+    // Set up click listeners on both canvas and document
+    canvas.addEventListener("click", handleUserInteraction, { once: true });
+    document.addEventListener("click", handleUserInteraction, { once: true });
+    
+    // Also listen for touch events for mobile devices
+    canvas.addEventListener("touchend", handleUserInteraction, { once: true });
+    document.addEventListener("touchend", handleUserInteraction, { once: true });
   });
+}
+
+// Separate function to handle user interaction
+function handleUserInteraction() {
+  console.log("User interaction detected");
+  const audioPrompt = document.getElementById("audioPrompt");
+  playAudioOnce();
+  audioPrompt.classList.add("hidden");
+  
+  // Remove any remaining listeners
+  document.removeEventListener("click", handleUserInteraction);
+  canvas.removeEventListener("click", handleUserInteraction);
+  document.removeEventListener("touchend", handleUserInteraction);
+  canvas.removeEventListener("touchend", handleUserInteraction);
 }
 
 document.addEventListener("DOMContentLoaded", init);
