@@ -27,9 +27,11 @@ function playAudioOnce() {
 
 
   if (audioContext.state === "suspended") {
+    console.log("Audio context suspended, resuming...");
     audioContext.resume();
   }
 
+  console.log("Playing audio");
   audioSource = audioContext.createBufferSource();
   audioSource.buffer = audioBuffer;
   audioSource.connect(audioContext.destination);
