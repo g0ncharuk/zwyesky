@@ -3,42 +3,7 @@ import "./style.css";
 const innerWidth = window.innerWidth;
 const isMobile = innerWidth <= 768;
 
-let audioContext;
-let audioBuffer;
-let audioSource;
 let audioLoaded = false;
-
-async function initAudio() {
-  try {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const response = await fetch("./background.mp3");
-    console.log("Audio file loaded:", response);
-    const arrayBuffer = await response.arrayBuffer();
-    audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-    audioLoaded = true;
-  } catch (error) {
-    console.error("Error loading audio:", error);
-  }
-}
-
-function playAudioOnce() {
-  console.log("playAudioOnce called", audioLoaded, audioContext);
-  if (!audioContext || !audioLoaded) return;
-
-  if (audioContext.state === "suspended") {
-    console.log("Audio context suspended, resuming...");
-    audioContext.resume();
-  }
-
-  // Only create and start a new audio source if one isn't already playing
-  if (!audioSource || audioSource.playbackState === audioSource.FINISHED_STATE) {
-    console.log("Playing audio");
-    audioSource = audioContext.createBufferSource();
-    audioSource.buffer = audioBuffer;
-    audioSource.connect(audioContext.destination);
-    audioSource.start(0);
-  }
-}
 
 const opacityAnimation = {
   delay: 3000,
@@ -365,36 +330,6 @@ function init() {
   requestAnimationFrame(animate);
 
   window.addEventListener("resize", onResize);
-
-  initAudio().then(() => {
-    const audioPrompt = document.getElementById("audioPrompt");
-    console.log("Audio loaded:", audioLoaded);
-    
-    // Always show the prompt on initial load for better user experience
-    audioPrompt.style.pointerEvents = "auto";
-    
-    // Set up click listeners on both canvas and document
-    canvas.addEventListener("click", handleUserInteraction, { once: true });
-    document.addEventListener("click", handleUserInteraction, { once: true });
-    
-    // Also listen for touch events for mobile devices
-    canvas.addEventListener("touchend", handleUserInteraction, { once: true });
-    document.addEventListener("touchend", handleUserInteraction, { once: true });
-  });
-}
-
-// Separate function to handle user interaction
-function handleUserInteraction() {
-  console.log("User interaction detected");
-  const audioPrompt = document.getElementById("audioPrompt");
-  playAudioOnce();
-  audioPrompt.classList.add("hidden");
-  
-  // Remove any remaining listeners
-  document.removeEventListener("click", handleUserInteraction);
-  canvas.removeEventListener("click", handleUserInteraction);
-  document.removeEventListener("touchend", handleUserInteraction);
-  canvas.removeEventListener("touchend", handleUserInteraction);
 }
 
 document.addEventListener("DOMContentLoaded", init);
