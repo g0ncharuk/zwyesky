@@ -149,12 +149,13 @@ nav.icons-row {
   height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: centender;
+  justify-content: end;
   position: relative;
+  padding-bottom: 16px;
 }
 
-.audio-prompt-content::after {
+/* .audio-prompt-content::after {
   color: #BEC2CB;
   content: "Click anywhere to experience the site";
   position: absolute;
@@ -165,7 +166,7 @@ nav.icons-row {
   font-size: 0.8rem;
   letter-spacing: 2px;
   opacity: 0.8;
-}
+} */
 
 .audio-prompt.hidden {
   opacity: 0;

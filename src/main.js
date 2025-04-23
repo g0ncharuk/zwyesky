@@ -57,7 +57,7 @@ function playAudio() {
     // Create and start audio source
     audioSource = audioContext.createBufferSource();
     audioSource.buffer = audioBuffer;
-    audioSource.loop = true; // Loop the background music
+    audioSource.loop = false; // Changed to false - don't loop the background music
     audioSource.connect(audioContext.destination);
     audioSource.start(0);
     audioPlaying = true;
