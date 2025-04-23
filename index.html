@@ -26,6 +26,13 @@
   
   <!-- Add homescreen icon for iOS -->
   <link rel="apple-touch-startup-image" href="./apple-touch-icon.png">
+  
+  <!-- Add splash screens for various iOS devices -->
+  <link rel="apple-touch-startup-image" href="./apple-touch-icon.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)">
+  <link rel="apple-touch-startup-image" href="./apple-touch-icon.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)">
+  <link rel="apple-touch-startup-image" href="./apple-touch-icon.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)">
+  <link rel="apple-touch-startup-image" href="./apple-touch-icon.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)">
+  <link rel="apple-touch-startup-image" href="./apple-touch-icon.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)">
 </head>
 
 <body>
@@ -99,12 +106,22 @@
     // iOS specific fixes
     document.addEventListener('touchstart', () => {}, {passive: true});
     
-    // iOS Safari toolbar hiding
+    // iOS Safari toolbar and status bar hiding
     if (navigator.userAgent.match(/(iPad|iPhone|iPod)/g)) {
-      // Add to home screen prompt (can be styled further)
-      if (!window.navigator.standalone) {
-        // Optional: You could show a custom "Add to Home Screen" message here
-        console.log("For best experience, add this website to your home screen");
+      // Check if app is in standalone mode (added to home screen)
+      if (window.navigator.standalone) {
+        // App is running in standalone mode from home screen
+        // Ensure the app takes full screen including the status bar area
+        document.body.style.paddingTop = "env(safe-area-inset-top)";
+        
+        // Force redraw to ensure proper display
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+        }, 100);
+      } else {
+        // App is running in browser - prompt user to add to home screen
+        console.log("For best experience with hidden status bar, add this website to your home screen");
+        // You could display a custom UI element here to prompt users
       }
       
       // Fix for iOS Safari scrolling showing the toolbar
@@ -118,6 +135,13 @@
       window.addEventListener('resize', function() {
         window.scrollTo(0, 0);
       });
+      
+      // Prevent bounce effect which can reveal status bar
+      document.body.addEventListener('touchmove', function(e) {
+        if (e.target === document.body) {
+          e.preventDefault();
+        }
+      }, { passive: false });
     }
   </script>
 </body>

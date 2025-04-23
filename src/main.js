@@ -268,7 +268,6 @@ function updateYOverlays(elapsed) {
     alpha = from + t * (to - from);
   }
 
-  topOverlay.style.opacity = alpha;
   bottomOverlay.style.opacity = alpha;
 }
 
