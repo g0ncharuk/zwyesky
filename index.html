@@ -77,6 +77,16 @@
   </div>
 
   <script type="module" src="./src/main.js"></script>
+
+  <script>
+    document.addEventListener('pointerup', () => {
+      if (navigator.userAgent.includes('Android') &&
+        document.fullscreenEnabled &&
+        !document.fullscreenElement) {
+        document.documentElement.requestFullscreen({ navigationUI: 'hide' });
+      }
+    }, { once: true });
+  </script>
 </body>
 
 </html>
