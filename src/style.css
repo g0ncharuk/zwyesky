@@ -2,11 +2,10 @@ html, body {
   margin: 0;
   padding: 0;
   background: #0A0A0A;
-  overflow: hidden;
   font-family: sans-serif;
-  height: 100%; /* Ensure full height */
-  width: 100%; /* Ensure full width */
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  height: 100%;
+  min-height: 100dvh;
+  overflow: hidden;
 }
 
 @supports (-webkit-touch-callout: none) {
@@ -14,9 +13,16 @@ html, body {
     padding-top: env(safe-area-inset-top);
     min-height: -webkit-fill-available;
   }
-  
+
   .content-container {
     padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }
 
@@ -214,7 +220,7 @@ nav.icons-row {
     bottom: 20px;
     right: 20px;
   }
-  
+
   #audioToggle svg {
     width: 20px;
     height: 20px;
@@ -271,14 +277,22 @@ nav.icons-row {
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 .play-button {
   background-color: transparent;
-  border:0;
+  border: 0;
   border-radius: 50px;
   color: #BEC2CB;
   cursor: pointer;
