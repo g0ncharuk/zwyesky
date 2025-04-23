@@ -6,6 +6,18 @@ html, body {
   height: 100%;
   min-height: 100dvh;
   overflow: hidden;
+  /* Add these properties to help with iOS toolbar */
+  position: fixed;
+  width: 100%;
+  /* Support for older iOS versions */
+  height: -webkit-fill-available;
+}
+
+/* Special viewport handling for iOS Safari */
+@supports (-webkit-touch-callout: none) {
+  html, body {
+    height: -webkit-fill-available;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

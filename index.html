@@ -16,10 +16,16 @@
   <meta name="apple-mobile-web-app-title" content="ZWYΞ$KɎ">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <!-- Add standalone mode hint -->
+  <meta name="mobile-web-app-capable" content="yes">
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 
   <link rel="stylesheet" href="./src/style.css" />
+  
+  <!-- Add homescreen icon for iOS -->
+  <link rel="apple-touch-startup-image" href="./apple-touch-icon.png">
 </head>
 
 <body>
@@ -90,8 +96,29 @@
       }
     }, { once: true });
 
-    // iOS specific fix for audio
+    // iOS specific fixes
     document.addEventListener('touchstart', () => {}, {passive: true});
+    
+    // iOS Safari toolbar hiding
+    if (navigator.userAgent.match(/(iPad|iPhone|iPod)/g)) {
+      // Add to home screen prompt (can be styled further)
+      if (!window.navigator.standalone) {
+        // Optional: You could show a custom "Add to Home Screen" message here
+        console.log("For best experience, add this website to your home screen");
+      }
+      
+      // Fix for iOS Safari scrolling showing the toolbar
+      document.addEventListener('scroll', function(e) {
+        if (window.scrollY > 0) {
+          window.scrollTo(0, 0);
+        }
+      });
+      
+      // Handle orientation changes
+      window.addEventListener('resize', function() {
+        window.scrollTo(0, 0);
+      });
+    }
   </script>
 </body>
 
