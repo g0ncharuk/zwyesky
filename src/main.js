@@ -99,7 +99,7 @@ let canvas, ctx;
 let startTime = 0;
 let lastFrameTime = 0;
 
-let bottomOverlay, leftOverlay, rightOverlay;
+let bottomOverlay, leftOverlay, rightOverlay, topOverlay;
 
 function createCells() {
   CELLS = [];
@@ -268,6 +268,7 @@ function updateYOverlays(elapsed) {
     alpha = from + t * (to - from);
   }
 
+  topOverlay.style.opacity = alpha;
   bottomOverlay.style.opacity = alpha;
 }
 
@@ -322,6 +323,7 @@ function init() {
   canvas = document.getElementById("triangleCanvas");
   ctx = canvas.getContext("2d");
 
+  topOverlay = document.querySelector(".top-overflow");
   bottomOverlay = document.querySelector(".bottom-overflow");
   leftOverlay = document.querySelector(".left-overflow");
   rightOverlay = document.querySelector(".right-overflow");
@@ -330,7 +332,7 @@ function init() {
   requestAnimationFrame(animate);
 
   window.addEventListener("resize", onResize);
-  
+
   // Initialize audio when the page loads and setup audio prompt
   initAudio().then(() => {
     setupAudioPrompt();
