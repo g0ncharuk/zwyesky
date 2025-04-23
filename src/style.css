@@ -6,6 +6,18 @@ html, body {
   font-family: sans-serif;
   height: 100%; /* Ensure full height */
   width: 100%; /* Ensure full width */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+@supports (-webkit-touch-callout: none) {
+  body {
+    padding-top: env(safe-area-inset-top);
+    min-height: -webkit-fill-available;
+  }
+  
+  .content-container {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
 
 #triangleCanvas {
@@ -152,7 +164,7 @@ nav.icons-row {
   align-items: centender;
   justify-content: end;
   position: relative;
-  padding-bottom: 16px;
+  padding-bottom: 0px;
 }
 
 /* .audio-prompt-content::after {
