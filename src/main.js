@@ -3,7 +3,45 @@ import "./style.css";
 const innerWidth = window.innerWidth;
 const isMobile = innerWidth <= 768;
 
+let audioContext;
+let audioBuffer;
+let audioSource;
 let audioLoaded = false;
+let audioPlaying = false;
+
+async function initAudio() {
+  try {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    const response = await fetch("./background.mp3");
+    const arrayBuffer = await response.arrayBuffer();
+    audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+    audioLoaded = true;
+    console.log("Audio loaded successfully");
+  } catch (error) {
+    console.error("Error loading audio:", error);
+  }
+}
+
+function playAudio() {
+  if (!audioContext || !audioLoaded || audioPlaying) return;
+
+  try {
+    if (audioContext.state === "suspended") {
+      audioContext.resume();
+    }
+
+    audioSource = audioContext.createBufferSource();
+    audioSource.buffer = audioBuffer;
+    audioSource.connect(audioContext.destination);
+    audioSource.start(0);
+    audioPlaying = true;
+
+    console.log("Audio playing");
+  } catch (error) {
+    console.error("Error playing audio:", error);
+  }
+}
 
 const opacityAnimation = {
   delay: 3000,
@@ -330,6 +368,16 @@ function init() {
   requestAnimationFrame(animate);
 
   window.addEventListener("resize", onResize);
+
+  initAudio().then(() => {
+    const audioPrompt = document.getElementById("audioPrompt");
+    const playButton = document.getElementById("playAudioButton");
+
+    playButton.addEventListener("click", function () {
+      playAudio();
+      audioPrompt.classList.add("hidden");
+    });
+  });
 }
 
 document.addEventListener("DOMContentLoaded", init);

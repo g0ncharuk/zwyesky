@@ -130,6 +130,47 @@ nav.icons-row {
   height: auto;
 }
 
+.audio-prompt {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.audio-prompt-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.audio-prompt-content::after {
+  color: #BEC2CB;
+  content: "Click anywhere to experience the site";
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  opacity: 0.8;
+}
+
+.audio-prompt.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
 @media screen and (max-width: 768px) {
   .content-container {
     bottom: 50px;
@@ -162,6 +203,11 @@ nav.icons-row {
   #audioToggle svg {
     width: 20px;
     height: 20px;
+  }
+
+  .play-button {
+    padding: 15px 30px;
+    font-size: 0.9rem;
   }
 }
 
