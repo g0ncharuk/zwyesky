@@ -34,6 +34,6 @@
   "lang": "en",
   "prefer_related_applications": false,
   "categories": ["business"],
-  "display_override": ["fullscreen", "minimal-ui"],
-  "display": "standalone"
+  "display_override": ["fullscreen", "minimal-ui", "standalone"],
+  "display": "fullscreen"
 }
