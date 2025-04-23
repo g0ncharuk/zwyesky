@@ -8,39 +8,105 @@ let audioBuffer;
 let audioSource;
 let audioLoaded = false;
 let audioPlaying = false;
+let audioInitialized = false;
 
+// Improved audio initialization for mobile
 async function initAudio() {
   try {
+    // Create audio context with user interaction to satisfy mobile browser requirements
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
+    
+    // Show the audio prompt initially
+    const audioPrompt = document.getElementById("audioPrompt");
+    if (audioPrompt) {
+      audioPrompt.classList.remove("hidden");
+    }
+    
+    // Preload the audio file
     const response = await fetch("./background.mp3");
     const arrayBuffer = await response.arrayBuffer();
     audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
     audioLoaded = true;
     console.log("Audio loaded successfully");
+    
+    return true;
   } catch (error) {
     console.error("Error loading audio:", error);
+    return false;
   }
 }
 
+// Function to play audio that handles different mobile browser requirements
 function playAudio() {
-  if (!audioContext || !audioLoaded || audioPlaying) return;
+  if (!audioContext || !audioLoaded) {
+    console.warn("Audio not ready yet");
+    return false;
+  }
+  
+  if (audioPlaying) {
+    console.log("Audio already playing");
+    return true;
+  }
 
   try {
+    // Resume suspended context (important for iOS)
     if (audioContext.state === "suspended") {
       audioContext.resume();
     }
 
+    // Create and start audio source
     audioSource = audioContext.createBufferSource();
     audioSource.buffer = audioBuffer;
+    audioSource.loop = true; // Loop the background music
     audioSource.connect(audioContext.destination);
     audioSource.start(0);
     audioPlaying = true;
-
-    console.log("Audio playing");
+    audioInitialized = true;
+    
+    console.log("Audio playing successfully");
+    return true;
   } catch (error) {
     console.error("Error playing audio:", error);
+    return false;
   }
+}
+
+// Handle the audio prompt interaction
+function setupAudioPrompt() {
+  const audioPrompt = document.getElementById("audioPrompt");
+  const playButton = document.getElementById("playAudioButton");
+  
+  if (!audioPrompt || !playButton) return;
+  
+  // Multiple event types to ensure better mobile compatibility
+  const events = ["click", "touchstart", "touchend"];
+  
+  events.forEach(eventType => {
+    playButton.addEventListener(eventType, function(e) {
+      e.preventDefault(); // Prevent default behavior
+      if (playAudio()) {
+        audioPrompt.classList.add("hidden");
+      }
+    });
+    
+    // Allow clicking anywhere on the prompt to play audio
+    audioPrompt.addEventListener(eventType, function(e) {
+      if (e.target === audioPrompt || e.target === audioPrompt.querySelector(".audio-prompt-content")) {
+        e.preventDefault();
+        if (playAudio()) {
+          audioPrompt.classList.add("hidden");
+        }
+      }
+    });
+  });
+  
+  // Fallback - try to initialize on any document interaction
+  document.addEventListener("click", function initOnFirstClick() {
+    if (!audioInitialized) {
+      playAudio();
+      document.removeEventListener("click", initOnFirstClick);
+    }
+  }, { once: true });
 }
 
 const opacityAnimation = {
@@ -368,15 +434,10 @@ function init() {
   requestAnimationFrame(animate);
 
   window.addEventListener("resize", onResize);
-
+  
+  // Initialize audio when the page loads and setup audio prompt
   initAudio().then(() => {
-    const audioPrompt = document.getElementById("audioPrompt");
-    const playButton = document.getElementById("playAudioButton");
-
-    playButton.addEventListener("click", function () {
-      playAudio();
-      audioPrompt.classList.add("hidden");
-    });
+    setupAudioPrompt();
   });
 }
 

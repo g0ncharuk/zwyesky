@@ -1,9 +1,11 @@
-body {
+html, body {
   margin: 0;
   padding: 0;
   background: #0A0A0A;
   overflow: hidden;
   font-family: sans-serif;
+  height: 100%; /* Ensure full height */
+  width: 100%; /* Ensure full width */
 }
 
 #triangleCanvas {
@@ -259,4 +261,23 @@ nav.icons-row {
   0% { transform: scale(1); }
   50% { transform: scale(1.05); }
   100% { transform: scale(1); }
+}
+
+.play-button {
+  background-color: transparent;
+  border:0;
+  border-radius: 50px;
+  color: #BEC2CB;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  animation: pulse 2s infinite;
+}
+
+.play-button:hover {
+  background-color: rgba(10, 10, 10, 0.9);
+  transform: scale(1.05);
+}
+
+.play-button svg {
+  margin-right: 5px;
 }
