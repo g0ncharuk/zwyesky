@@ -17,7 +17,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
   <link rel="stylesheet" href="./src/style.css" />
 </head>
@@ -29,7 +29,7 @@
   <div id="audioPrompt" class="audio-prompt">
     <div class="audio-prompt-content">
       <button id="playAudioButton" class="play-button">
-        <span>Tap to play audio</span>
+        <span>Tap to experience the site</span>
       </button>
     </div>
   </div>
@@ -80,13 +80,18 @@
   <script type="module" src="./src/main.js"></script>
 
   <script>
+    // This helps with fullscreen mode on Android
     document.addEventListener('pointerup', () => {
       if (navigator.userAgent.includes('Android') &&
         document.fullscreenEnabled &&
         !document.fullscreenElement) {
-        document.documentElement.requestFullscreen({ navigationUI: 'hide' });
+        document.documentElement.requestFullscreen({ navigationUI: 'hide' })
+          .catch(err => console.error('Fullscreen error:', err));
       }
     }, { once: true });
+
+    // iOS specific fix for audio
+    document.addEventListener('touchstart', () => {}, {passive: true});
   </script>
 </body>
 

@@ -4,6 +4,8 @@ let audioCtx = null; // created lazily
 let arrayBuffer = null; // raw MP3 bytes
 let decodedBuffer = null; // AudioBuffer after decode
 let hasPlayed = false; // one-shot guard
+let audioElement = null; // HTML5 audio element for mobile fallback
+let usingAudioElement = false; // flag to track which method we're using
 
 /*
  * 1. Pre-fetch the file as soon as the page loads
@@ -11,6 +13,16 @@ let hasPlayed = false; // one-shot guard
  */
 export async function initAudio() {
   if (arrayBuffer) return true; // already fetched
+
+  // Create a hidden audio element as fallback method
+  if (!audioElement) {
+    audioElement = document.createElement('audio');
+    audioElement.src = "./background.mp3";
+    audioElement.preload = "auto";
+    audioElement.loop = false;
+    audioElement.style.display = "none";
+    document.body.appendChild(audioElement);
+  }
 
   try {
     const resp = await fetch("./background.mp3", { cache: "force-cache" });
@@ -32,6 +44,26 @@ export async function playAudio() {
     console.log("[audio] already playing");
     return true;
   }
+
+  // Try HTML5 Audio element first (better for mobile)
+  try {
+    if (audioElement) {
+      console.log("[audio] attempting HTML5 audio playback");
+      const playPromise = audioElement.play();
+      
+      if (playPromise !== undefined) {
+        await playPromise;
+        hasPlayed = true;
+        usingAudioElement = true;
+        console.log("[audio] HTML5 audio playback started");
+        return true;
+      }
+    }
+  } catch (err) {
+    console.warn("[audio] HTML5 audio failed, falling back to Web Audio API:", err);
+  }
+
+  // Fall back to Web Audio API
   if (!arrayBuffer) {
     console.warn("[audio] audio not prefetched yet");
     return false;
@@ -57,7 +89,7 @@ export async function playAudio() {
     src.start();
 
     hasPlayed = true;
-    console.log("[audio] playback started");
+    console.log("[audio] Web Audio API playback started");
     return true;
   } catch (err) {
     console.error("[audio] playback error:", err);
@@ -81,15 +113,19 @@ export function setupAudioPrompt() {
     }
   }
 
-  ["pointerup", "click", "touchend"].forEach((ev) =>
-    button.addEventListener(ev, tryPlay, { once: true })
-  );
+  /* Mobile-friendly approach - add multiple event types */
+  ["pointerup", "click", "touchend"].forEach((ev) => {
+    button.addEventListener(ev, tryPlay);
+    prompt.addEventListener(ev, tryPlay);
+  });
 
-  /* optional: tapping anywhere on the dimmed overlay works too */
-  prompt.addEventListener("pointerup", tryPlay, { once: true });
-
-  /* safety net – any first document click */
+  /* safety net – any first document interaction */
   document.addEventListener("pointerup", tryPlay, {
+    once: true,
+    capture: true,
+  });
+  
+  document.addEventListener("touchend", tryPlay, {
     once: true,
     capture: true,
   });
