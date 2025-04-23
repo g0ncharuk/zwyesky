@@ -1,6 +1,6 @@
 {
-  "name": "",
-  "short_name": "",
+  "name": "ZWYΞ$KɎ",
+  "short_name": "ZWYΞ$KɎ",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
@@ -15,5 +15,7 @@
   ],
   "theme_color": "#3a3a3a",
   "background_color": "#3a3a3a",
-  "display": "standalone"
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "start_url": "/"
 }
