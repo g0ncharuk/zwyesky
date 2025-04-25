@@ -72,6 +72,7 @@ html, body {
   height: 25vh;
   background: linear-gradient(180deg, #0A0A0A, rgba(10, 10, 10, 0.1));
 }
+
 .bottom-overflow {
   bottom: 0;
   left: 0;
@@ -107,12 +108,17 @@ html, body {
   align-items: center;
   gap: 20px;
   z-index: 1;
+  display: none;
+}
+
+.content-container.visible {
+  display: block;
 }
 
 header .brand-text {
   font-size: 2rem;
   font-weight: 400;
-  margin-bottom: 12px;
+  margin-bottom: 24px;
   color: #BEC2CB;
   letter-spacing: 0;
   opacity: 0;
@@ -171,10 +177,11 @@ nav.icons-row {
   left: 0;
   width: 100%;
   height: 100%;
+  z-index: 1000;
   display: flex;
-  align-items: center;
   justify-content: center;
-  z-index: 100;
+  align-items: center;
+  cursor: pointer;
 }
 
 .audio-prompt-content {
@@ -182,24 +189,25 @@ nav.icons-row {
   height: 100%;
   display: flex;
   flex-direction: column;
+  gap: 10px;
+  justify-content: center;
   align-items: center;
-  justify-content: end;
-  position: relative;
-  padding-bottom: 0px;
 }
 
-/* .audio-prompt-content::after {
+.audio-prompt-content svg {
+  height: auto;
+  animation: pulse 2s infinite;
+}
+
+.centered-text {
+  text-transform: uppercase;
+  font-size: 2rem;
+  font-weight: 400;
+  letter-spacing: 0;
   color: #BEC2CB;
-  content: "Click anywhere to experience the site";
-  position: absolute;
-  bottom: 20px;
-  left: 0;
-  width: 100%;
   text-align: center;
-  font-size: 0.8rem;
-  letter-spacing: 2px;
-  opacity: 0.8;
-} */
+}
+
 
 .audio-prompt.hidden {
   opacity: 0;
@@ -297,31 +305,10 @@ nav.icons-row {
   }
 
   50% {
-    transform: scale(1.05);
+    transform: scale(1.2);
   }
 
   100% {
     transform: scale(1);
   }
-}
-
-.play-button {
-  background-color: transparent;
-  border: 0;
-  border-radius: 50px;
-  color: #BEC2CB;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  animation: pulse 2s infinite;
-}
-
-.play-button:hover, 
-.play-button:active,
-.play-button:focus {
-  background-color: rgba(190, 194, 203, 0.25);
-  transform: scale(1.05);
-}
-
-.play-button svg {
-  margin-right: 5px;
 }

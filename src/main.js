@@ -297,7 +297,6 @@ function animate(timestamp) {
   if (timestamp - lastFrameTime < frameInterval) return;
   lastFrameTime = timestamp;
 
-  if (!startTime) startTime = timestamp;
   const elapsed = timestamp - startTime;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -310,12 +309,39 @@ function animate(timestamp) {
   updateXOverlays(elapsed);
 }
 
+let animationStarted = false;
+
+function startAnimation() {
+  if (!animationStarted) {
+    animationStarted = true;
+
+    startTime = performance.now();
+    lastFrameTime = 0;
+
+    if (leftOverlay) leftOverlay.style.opacity = 0;
+    if (rightOverlay) rightOverlay.style.opacity = 0;
+    if (bottomOverlay) bottomOverlay.style.opacity = 0.8;
+    if (topOverlay) topOverlay.style.opacity = 1;
+
+    requestAnimationFrame(animate);
+    document.querySelector(".content-container").classList.add("visible");
+  }
+}
+
+function restartAnimation() {
+  startTime = 0;
+  lastFrameTime = 0;
+  createCells();
+}
+
 function onResize() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   createCells();
-  startTime = 0;
-  lastFrameTime = 0;
+  if (animationStarted) {
+    startTime = 0;
+    lastFrameTime = 0;
+  }
 }
 
 function init() {
@@ -328,14 +354,15 @@ function init() {
   rightOverlay = document.querySelector(".right-overflow");
 
   onResize();
-  requestAnimationFrame(animate);
 
   window.addEventListener("resize", onResize);
 
-  // Initialize audio when the page loads and setup audio prompt
   initAudio().then(() => {
-    setupAudioPrompt();
+    setupAudioPrompt(startAnimation);
   });
+
+  window.restartAnimation = restartAnimation;
+  window.startAnimation = startAnimation;
 }
 
 document.addEventListener("DOMContentLoaded", init);
