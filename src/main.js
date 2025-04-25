@@ -256,16 +256,15 @@ function drawCell(cell, elapsed) {
 
 function updateYOverlays(elapsed) {
   const { delay, duration, from, to } = overlayYAnimetion;
-  let alpha = 1;
-
   const fadeElapsed = elapsed - delay;
+  
+  let alpha;
   if (fadeElapsed <= 0) {
     alpha = from;
   } else if (fadeElapsed >= duration) {
     alpha = to;
   } else {
-    const t = fadeElapsed / duration;
-    alpha = from + t * (to - from);
+    alpha = from + (fadeElapsed / duration) * (to - from);
   }
 
   bottomOverlay.style.opacity = alpha;
@@ -273,16 +272,15 @@ function updateYOverlays(elapsed) {
 
 function updateXOverlays(elapsed) {
   const { delay, duration, from, to } = overlayXAnimetion;
-  let alpha = 1;
-
   const fadeElapsed = elapsed - delay;
+  
+  let alpha;
   if (fadeElapsed <= 0) {
     alpha = from;
   } else if (fadeElapsed >= duration) {
     alpha = to;
   } else {
-    const t = fadeElapsed / duration;
-    alpha = from + t * (to - from);
+    alpha = from + (fadeElapsed / duration) * (to - from);
   }
 
   leftOverlay.style.opacity = alpha;

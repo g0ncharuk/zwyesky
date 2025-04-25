@@ -84,17 +84,12 @@ export async function playAudio() {
 }
 
 export function setupAudioPrompt(startAnimationCallback) {
-  const audioPrompt = document.getElementById('audioPrompt');
+  const audioPrompt = document.getElementById("audioPrompt");
 
   if (audioPrompt) {
-    audioPrompt.addEventListener('click', () => {
-      // Start audio
+    audioPrompt.addEventListener("click", () => {
       playAudio();
-      
-      // Hide the prompt
-      audioPrompt.style.display = 'none';
-      
-      // Start animation
+      audioPrompt.style.display = "none";
       if (startAnimationCallback) {
         startAnimationCallback();
       }
