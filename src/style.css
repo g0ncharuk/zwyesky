@@ -6,19 +6,15 @@ html, body {
   height: 100%;
   min-height: 100dvh;
   overflow: hidden;
-  /* Add these properties to help with iOS toolbar */
   position: fixed;
   width: 100%;
-  /* Support for older iOS versions */
   height: -webkit-fill-available;
-  /* Support for iOS notch and status bar area */
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
 }
 
-/* Special viewport handling for iOS Safari */
 @supports (-webkit-touch-callout: none) {
   html, body {
     height: -webkit-fill-available;
@@ -50,7 +46,7 @@ html, body {
 .overflow-container {
   z-index: 1;
   position: absolute;
-  inset: 0; /* Using inset shorthand instead of top, left, width, height */
+  inset: 0;
 }
 
 .top-overflow,
@@ -58,7 +54,6 @@ html, body {
 .left-overflow,
 .right-overflow {
   position: absolute;
-  /* Removed default opacity: 0 as it's overridden in individual classes */
 }
 
 .top-overflow {
@@ -185,7 +180,7 @@ nav.icons-row {
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 16px;
   justify-content: center;
   align-items: center;
 }
